@@ -10,8 +10,6 @@ ATTENDANCE_TABLE = """
     CREATE TABLE attendance (
         id INTEGER PRIMARY KEY,
         member_id INTEGER,
-        year INTEGER,
-        month INTEGER,
-        day INTEGER,
+        date TEXT,
         FOREIGN KEY(member_id) REFERENCES members(id)
 )"""

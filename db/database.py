@@ -35,8 +35,7 @@ class AttendanceDB():
 
     # Mark member's attendance
     def add_attendance(self, member_id):
-        today = date.today()
-        self.cur.execute(sql.ADD_ATTENDANCE, (member_id, today.year, today.month, today.day))
+        self.cur.execute(sql.ADD_ATTENDANCE, (member_id, utils.today()))
 
     # Query total attendees on a given day
     # If no date is provided, return the most recent Sunday
@@ -45,7 +44,7 @@ class AttendanceDB():
         if (date is None):
             date = utils.most_recent_sunday()
 
-        self.cur.execute(sql.COUNT_ATTENDEES, (date.year, date.month, date.day))
+        self.cur.execute(sql.COUNT_ATTENDEES, (date))
         row = self.cur.fetchone()
         total = row[0] if row else 0
         return total
@@ -53,8 +52,18 @@ class AttendanceDB():
     # Query names of attendees on a given day
     # If no date is provided, return the most recent Sunday
     # Returns a list of tuples
-    def get_attendee_names(self, date = None):
+    def get_attendees_on_date(self, date = None):
         if (date is None):
             date = utils.most_recent_sunday()
-        self.cur.execute(sql.GET_ATTENDEE_NAMES, (date.year, date.month, date.day))
+        self.cur.execute(sql.GET_ATTENDEE_NAMES, (date))
+        return self.cur.fetchall()
+    
+    # Query attendance between [start_date, end_date]
+    # If start_date is not provided, then return attendance in past 3 months
+    def get_attendees_in_date_range(self, start_date = None, end_date = None):
+        if (start_date is None):
+            start_date = utils.get_date_months_ago()
+        if (end_date is None):
+            end_date = utils.today()
+        self.cur.execute(sql.GET_ATTENDEES_IN_RANGE, (start_date, end_date))
         return self.cur.fetchall()
