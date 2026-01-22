@@ -1,3 +1,4 @@
+# Table Schemas
 MEMBERS_TABLE = """
     CREATE TABLE members (
         id INTEGER PRIMARY KEY,

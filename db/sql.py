@@ -1,3 +1,4 @@
+# SQL Statements
 ADD_MEMBER = """
     INSERT into members VALUES
     (?, ?)
