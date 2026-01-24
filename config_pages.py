@@ -25,7 +25,7 @@ def display_date():
     most_recent_sunday = utils.most_recent_sunday(iso = False)
     st.markdown(
         f"""
-        <h5>
+        <h5 style="margin-bottom: 1rem;">
             {most_recent_sunday.year}年 
             {most_recent_sunday.month}月 
             {most_recent_sunday.day}日 Attendance 出席表
