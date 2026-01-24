@@ -1,13 +1,13 @@
 # Table Schemas
 MEMBERS_TABLE = """
-    CREATE TABLE members (
+    CREATE TABLE IF NOT EXISTS members (
         id INTEGER PRIMARY KEY,
         english_name TEXT,
         chinese_name TEXT
 )"""
 
 ATTENDANCE_TABLE = """
-    CREATE TABLE attendance (
+    CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY,
         member_id INTEGER,
         date TEXT,
