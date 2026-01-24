@@ -1,9 +1,12 @@
 import streamlit as st
 from config_pages import set_page, display_organization, display_date
+from app import get_db
 
 set_page()
 display_organization()
 display_date()
 
-if "page" not in st.session_state or st.session_state["page"] != "mark_attendance":
-    st.session_state["page"] = "mark_attendance"
+db = get_db()
+members = db.get_members()
+print(members)
+    
