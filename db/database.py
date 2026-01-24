@@ -1,7 +1,8 @@
 from datetime import date
 import sqlite3
 
-import utils, schema, sql
+from . import schema, sql
+import utils
 
 class AttendanceDB():
     def __init__(self, DB_FILENAME):
@@ -17,13 +18,13 @@ class AttendanceDB():
 
     # Create table if it does not exist
     def create_tables(self):
-        self.cur.execute(schema.MEMBERS_TABLE)
-        self.cur.execute(schema.ATTENDANCE_TABLE)
+        self.curr.execute(schema.MEMBERS_TABLE)
+        self.curr.execute(schema.ATTENDANCE_TABLE)
 
     # Check if person is a member
     def is_member(self, english_name, chinese_name):
-        self.cur.execute(sql.IS_MEMBER, (english_name, chinese_name))
-        row = self.cur.fetchone()
+        self.curr.execute(sql.IS_MEMBER, (english_name, chinese_name))
+        row = self.curr.fetchone()
         if row:
             return True
         return False
@@ -31,11 +32,11 @@ class AttendanceDB():
     # Add new member
     def add_member(self, english_name, chinese_name):
         if not self.is_member():
-            self.cur.execute(sql.ADD_MEMBER, (english_name, chinese_name))
+            self.curr.execute(sql.ADD_MEMBER, (english_name, chinese_name))
 
     # Mark member's attendance
     def add_attendance(self, member_id):
-        self.cur.execute(sql.ADD_ATTENDANCE, (member_id, utils.today()))
+        self.curr.execute(sql.ADD_ATTENDANCE, (member_id, utils.today()))
 
     # Query total attendees on a given day
     # If no date is provided, return the most recent Sunday
@@ -44,8 +45,8 @@ class AttendanceDB():
         if (date is None):
             date = utils.most_recent_sunday()
 
-        self.cur.execute(sql.COUNT_ATTENDEES, (date))
-        row = self.cur.fetchone()
+        self.curr.execute(sql.COUNT_ATTENDEES, (date))
+        row = self.curr.fetchone()
         total = row[0] if row else 0
         return total
     
@@ -55,8 +56,8 @@ class AttendanceDB():
     def get_attendees_on_date(self, date = None):
         if (date is None):
             date = utils.most_recent_sunday()
-        self.cur.execute(sql.GET_ATTENDEE_NAMES, (date))
-        return self.cur.fetchall()
+        self.curr.execute(sql.GET_ATTENDEE_NAMES, (date))
+        return self.curr.fetchall()
     
     # Query attendance between [start_date, end_date]
     # If start_date is not provided, then return attendance in past 3 months
@@ -65,5 +66,5 @@ class AttendanceDB():
             start_date = utils.get_date_months_ago()
         if (end_date is None):
             end_date = utils.today()
-        self.cur.execute(sql.GET_ATTENDEES_IN_RANGE, (start_date, end_date))
-        return self.cur.fetchall()
+        self.curr.execute(sql.GET_ATTENDEES_IN_RANGE, (start_date, end_date))
+        return self.curr.fetchall()
