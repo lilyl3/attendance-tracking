@@ -9,6 +9,18 @@ ADD_ATTENDANCE = """
     VALUES (?, ?)
 """
 
+DELETE_ATTENDANCE = """
+    DELETE FROM attendance
+    WHERE attendance.member_id = ?
+    AND date = ?;
+"""
+
+IS_MEMBER_ID = """
+    SELECT id
+    FROM members
+    where id = ?
+"""
+
 IS_MEMBER = """
     SELECT id
     FROM members
@@ -23,7 +35,7 @@ COUNT_ATTENDEES = """
 """
 
 GET_MEMBERS = """
-    SELECT members.id, english_name, chinese_name, date
+    SELECT members.id, english_name, chinese_name, attendance.id
     FROM members
     LEFT JOIN attendance
     ON members.id = attendance.member_id

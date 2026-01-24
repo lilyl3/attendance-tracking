@@ -20,6 +20,14 @@ class AttendanceDB():
         curr.execute(schema.MEMBERS_TABLE)
         curr.execute(schema.ATTENDANCE_TABLE)
 
+    def is_member_id(self, member_id):
+        curr = self.create_cursor()
+        curr.execute(sql.IS_MEMBER_ID, (member_id,))
+        row = curr.fetchone()
+        if row:
+            return True
+        return False
+
     # Check if person is a member
     def is_member(self, english_name, chinese_name):
         curr = self.create_cursor()
@@ -32,7 +40,6 @@ class AttendanceDB():
     # Add new member
     def add_member(self, english_name, chinese_name):
         if not self.is_member(english_name, chinese_name):
-            print("adding member", english_name)
             curr = self.create_cursor()
             curr.execute(sql.ADD_MEMBER, (english_name, chinese_name))
             curr.connection.commit()
@@ -47,7 +54,12 @@ class AttendanceDB():
     # Mark member's attendance
     def add_attendance(self, member_id):
         curr = self.create_cursor()
-        curr.execute(sql.ADD_ATTENDANCE, (member_id, utils.today()))
+        curr.execute(sql.ADD_ATTENDANCE, (member_id, utils.most_recent_sunday()))
+        curr.connection.commit()
+
+    def delete_attendance(self, member_id):
+        curr = self.create_cursor()
+        curr.execute(sql.DELETE_ATTENDANCE, (member_id, utils.most_recent_sunday()))
         curr.connection.commit()
 
     # Query total attendees on a given day
