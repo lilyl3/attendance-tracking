@@ -40,7 +40,8 @@ class AttendanceDB():
     # Return all members
     def get_members(self):
         curr = self.create_cursor()
-        curr.execute(sql.GET_MEMBERS, (utils.most_recent_sunday))
+        most_recent_sunday = utils.most_recent_sunday()
+        curr.execute(sql.GET_MEMBERS, (most_recent_sunday, ))
         return curr.fetchall()
 
     # Mark member's attendance
@@ -57,7 +58,7 @@ class AttendanceDB():
             date = utils.most_recent_sunday()
 
         curr = self.create_cursor()
-        curr.execute(sql.COUNT_ATTENDEES, (date))
+        curr.execute(sql.COUNT_ATTENDEES, (date, ))
         row = curr.fetchone()
         total = row[0] if row else 0
         return total
