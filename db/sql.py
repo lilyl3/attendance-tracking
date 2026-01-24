@@ -23,10 +23,11 @@ COUNT_ATTENDEES = """
 """
 
 GET_MEMBERS = """
-    SELECT *
+    SELECT members.id, english_name, chinese_name, date
     FROM members
     LEFT JOIN attendance
-    WHERE date = ?
+    ON members.id = attendance.member_id
+    AND date = ?
 """
 
 GET_ATTENDEE_NAMES = """
