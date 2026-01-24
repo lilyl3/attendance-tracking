@@ -1,10 +1,12 @@
 # SQL Statements
 ADD_MEMBER = """
-    INSERT into members VALUES (?, ?)
+    INSERT into members (english_name, chinese_name)
+    VALUES (?, ?)
 """
 
 ADD_ATTENDANCE = """
-    INSERT INTO attendance VALUES (?, ?)
+    INSERT INTO attendance (member_id, date)
+    VALUES (?, ?)
 """
 
 IS_MEMBER = """
@@ -17,6 +19,13 @@ IS_MEMBER = """
 COUNT_ATTENDEES = """
     SELECT COUNT(*)
     FROM attendance
+    WHERE date = ?
+"""
+
+GET_MEMBERS = """
+    SELECT *
+    FROM members
+    LEFT JOIN attendance
     WHERE date = ?
 """
 
