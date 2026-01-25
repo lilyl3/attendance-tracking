@@ -1,11 +1,12 @@
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 
 # Iso formats date as YYYY-MM-DD
-def format_date(date, iso):
+def format_date(date_to_format, iso):
     if iso:
-        return date.today().isoformat()
+        return date_to_format.isoformat()
     else:
-        return date.today()
+        return date_to_format
     
 def today(iso = True):
     return format_date(date.today(), iso)
@@ -17,6 +18,5 @@ def most_recent_sunday(iso = True):
     return format_date(most_recent_sunday, iso)
 
 def get_date_months_ago(delta_month = 3, iso = True):
-    today = date.today()
-    date_months_ago = today - timedelta(months=delta_month)
+    date_months_ago = most_recent_sunday(iso=False) - relativedelta(months=delta_month)
     return format_date(date_months_ago, iso)
