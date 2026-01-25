@@ -82,7 +82,7 @@ class AttendanceDB():
         if (date is None):
             date = utils.most_recent_sunday()
         curr = self.create_cursor()
-        curr.execute(sql.GET_ATTENDEE_NAMES, (date))
+        curr.execute(sql.GET_ATTENDEE_NAMES, (date, ))
         return curr.fetchall()
     
     # Query attendance between [start_date, end_date]
