@@ -50,7 +50,7 @@ GET_ATTENDEE_NAMES = """
 """
 
 GET_ATTENDEES_IN_RANGE = """
-    SELECT members.id, english_name, chinese_name, year, month, day
+    SELECT date
     FROM members JOIN attendance
     ON members.id = attendance.member_id
     WHERE date >= ? AND date <= ?
