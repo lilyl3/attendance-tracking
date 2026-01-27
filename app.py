@@ -1,16 +1,15 @@
 import streamlit as st
-from config_pages import set_page, display_organization
-from db.database import AttendanceDB
-
-# Connect to database
-@st.cache_resource
-def get_db():
-    return AttendanceDB("attendance.db")
+from config_pages import set_page
+from pages import Add_Member, Dashboard, Mark_attendance
 
 set_page()
 
 pg = st.navigation(
-    ["pages/Dashboard.py", "pages/Mark_attendance.py", "pages/Add_Member.py"],
+    [
+        Dashboard.Dashboard, 
+        Mark_attendance.Mark_Attendance,
+        Add_Member.Add_Member
+    ],
     position = "top"
 )
 pg.run()
