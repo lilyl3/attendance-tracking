@@ -1,6 +1,13 @@
 import streamlit as st
 import utils
 
+from db.database import AttendanceDB
+
+# Connect to database
+@st.cache_resource
+def get_db():
+    return AttendanceDB("attendance.db")
+
 def set_page():
     st.set_page_config(layout="wide")
     st.markdown(
