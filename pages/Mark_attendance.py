@@ -20,7 +20,7 @@ def Mark_Attendance():
     # Present 在场吗? stores date formatted as YYYY-MM-DD => If str exists, then previously marked member as attended
     data_df["Present 在场吗?"] = data_df["Present 在场吗?"].apply(lambda x: bool(x) if pd.notna(x) else False).astype("boolean")
     data_df = data_df.set_index("MemberID")
-    data_df = data_df.sort_values(by="English Name 英文名")
+    # data_df = data_df.sort_values(by="English Name 英文名")
 
     edited_df = st.data_editor(
         data_df,
@@ -28,8 +28,10 @@ def Mark_Attendance():
             "Present 在场吗?": st.column_config.CheckboxColumn(
                 "Present 在场吗?",
                 default=False,
+
             )
         },
+        height="content",
         disabled=["English Name 英文名", "Chinese Name 中文名"],
         hide_index=True,
     )
