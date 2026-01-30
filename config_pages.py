@@ -15,6 +15,7 @@ def set_page():
         <style>
             .block-container {
                 padding: 1.5rem;
+                # background-color: #f8f8fb;
             }
 
             .block-container h5 {
@@ -43,6 +44,6 @@ def display_date():
 
 def display_organization():
     st.markdown(
-        """<h5>The Salvation Army San Gabriel Corps 基督教救世軍洛杉磯堂</h5>""",
+        """<h5 style="margin-top: 1rem;">The Salvation Army San Gabriel Corps 基督教救世軍洛杉磯堂</h5>""",
         unsafe_allow_html=True
     )
