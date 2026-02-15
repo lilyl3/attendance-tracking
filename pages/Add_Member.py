@@ -8,6 +8,9 @@ def Add_Member():
     display_organization()
     st.subheader("Add Member", divider="red")
 
+    if "page" not in st.session_state or st.session_state["page"] != "add_member":
+        st.session_state["page"] = "add_member"
+
     with st.form(key="add_member_form", clear_on_submit=True):
         english_name = st.text_input("English Name 英文名")
         chinese_name = st.text_input("Chinese Name 中文名")

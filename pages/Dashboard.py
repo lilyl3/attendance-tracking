@@ -5,11 +5,18 @@ from datetime import datetime
 
 from config_pages import set_page, display_organization, get_db
 from utils import most_recent_sunday, get_date_months_ago
+from pages import Mark_attendance
 
 def Dashboard():
     set_page()
     display_organization()
     db = get_db()
+
+    if "page" not in st.session_state or st.session_state["page"] != "dashboard":
+        st.session_state["page"] = "dashboard"
+
+    if "marked" in st.session_state and st.session_state["marked"]:
+        Mark_attendance.update_db()
 
     if "sunday_date" not in st.session_state:
         st.session_state["sunday_date"] = most_recent_sunday(iso=False)
