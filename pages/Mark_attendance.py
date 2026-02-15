@@ -13,7 +13,7 @@ db = get_db()
 
 def update_db():
     for member_id, isPresent in st.session_state["marked"].items():
-        print("Updated member=", member_id, isPresent)
+        # print("Updated member=", member_id, isPresent)
         if isPresent:
             db.add_attendance(member_id)
         else:
@@ -76,7 +76,7 @@ def Mark_Attendance():
         for member_id, row in edited_df[mask].iterrows():
             member_id = int(member_id)
             st.session_state["marked"][member_id] = row["Present 在场吗?"]
-            print("TODO: update member=", member_id, row["English Name 英文名"])
+            # print("TODO: update member=", member_id, row["English Name 英文名"])
 
         # Save to CSV
         edited_df.to_csv(file_name, index=True)
