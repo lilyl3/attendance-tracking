@@ -11,5 +11,6 @@ ATTENDANCE_TABLE = """
         id INTEGER PRIMARY KEY,
         member_id INTEGER,
         date TEXT,
-        FOREIGN KEY(member_id) REFERENCES members(id)
+        FOREIGN KEY(member_id) REFERENCES members(id),
+        UNIQUE(member_id, date)
 )"""

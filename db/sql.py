@@ -5,7 +5,8 @@ ADD_MEMBER = """
 """
 
 ADD_ATTENDANCE = """
-    INSERT INTO attendance (member_id, date)
+    INSERT OR IGNORE 
+    INTO attendance (member_id, date)
     VALUES (?, ?)
 """
 
