@@ -7,12 +7,13 @@ import utils
 class AttendanceDB():
     def __init__(self, DB_FILENAME):
         self.DB_FILENAME = DB_FILENAME
+        # Set up connection to database
+        self.conn = sqlite3.connect(self.DB_FILENAME, check_same_thread=False)  # OK if access conn from a different thread
+        self.conn.execute("PRAGMA foreign_keys = ON")                           # Enforce foreign keys
         self.create_tables()
 
     def create_cursor(self):
-        conn = sqlite3.connect(self.DB_FILENAME)    # Set up connection to database
-        conn.execute("PRAGMA foreign_keys = ON")    # Enforce foreign keys
-        return conn.cursor()
+        return self.conn.cursor()
 
     # Create table if it does not exist
     def create_tables(self):
@@ -81,17 +82,17 @@ class AttendanceDB():
     def get_attendees_on_date(self, date = None):
         if (date is None):
             date = utils.most_recent_sunday()
+        else:
+            date = utils.format_date(date, iso=True)
         curr = self.create_cursor()
         curr.execute(sql.GET_ATTENDEE_NAMES, (date, ))
         return curr.fetchall()
     
     # Query attendance between [start_date, end_date]
     # If start_date is not provided, then return attendance in past 3 months
-    def get_attendees_in_date_range(self, start_date = None, end_date = None):
-        if (start_date is None):
-            start_date = utils.get_date_months_ago()
-        if (end_date is None):
-            end_date = utils.today()
+    def get_attendees_in_date_range(self, start_date = utils.get_date_months_ago(), end_date = utils.today()):
+        start_date = utils.format_date(start_date, iso=True)
+        end_date = utils.format_date(end_date, iso=True)
         curr = self.create_cursor()
         curr.execute(sql.GET_ATTENDEES_IN_RANGE, (start_date, end_date))
         return curr.fetchall()
