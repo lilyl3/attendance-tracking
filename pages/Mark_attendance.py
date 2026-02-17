@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import time
+import os as os
 
 from config_pages import set_page, display_organization, display_date, get_db
-from utils import most_recent_sunday
+from utils import attendance_file_path
 
-file_name = "sunday_attendance/" + most_recent_sunday() + ".csv"
+file_path = attendance_file_path()
 # -----------------------------------------------------------
 #                 Load DB connection
 # -----------------------------------------------------------
@@ -68,7 +69,6 @@ def Mark_Attendance():
     # -----------------------------------------------------------
     #                 Auto-save changes on every edit
     # -----------------------------------------------------------
-    edited_df.to_csv(file_name, index=True)
     st.session_state["updated_mask"] = edited_df["Present 在场吗?"]
     mask = edited_df["Present 在场吗?"] != st.session_state["mask"]
 
@@ -79,4 +79,4 @@ def Mark_Attendance():
             # print("TODO: update member=", member_id, row["English Name 英文名"])
 
         # Save to CSV
-        edited_df.to_csv(file_name, index=True)
+        edited_df.to_csv(file_path, index=True)
