@@ -4,7 +4,7 @@ import plotly.express as px
 from datetime import datetime
 
 from config_pages import set_page, display_organization, get_db
-from utils import most_recent_sunday, get_date_months_ago
+from utils import most_recent_sunday, get_date_months_ago, format_date
 from pages import Mark_attendance
 
 def Dashboard():
@@ -12,21 +12,26 @@ def Dashboard():
     display_organization()
     db = get_db()
 
-    if "page" not in st.session_state or st.session_state["page"] != "dashboard":
-        st.session_state["page"] = "dashboard"
-
+    # ---------------- Update database  ---------------------
     if "marked" in st.session_state and st.session_state["marked"]:
         Mark_attendance.update_db()
 
+    # ---------------- Set session state ---------------------
+    if "page" not in st.session_state or st.session_state["page"] != "dashboard":
+        st.session_state["page"] = "dashboard"
+
     if "sunday_date" not in st.session_state:
         st.session_state["sunday_date"] = most_recent_sunday(iso=False)
-        st.session_state["date_range"] = (
-            get_date_months_ago(delta_month = 3, iso = False),
-            most_recent_sunday(iso=False)
-        )
+    if "start_date" not in st.session_state:
+        st.session_state["start_date"] = get_date_months_ago(delta_month = 3, iso = False)
+    if "end_date" not in st.session_state:
+        st.session_state["end_date"] = most_recent_sunday(iso=False)
 
     st.subheader("Sunday Overview", divider="red")
 
+    # ------------------------------------------------------------
+    #                   Display Sunday attendance
+    # ------------------------------------------------------------
     placeholder = st.empty() # Empty container
     # Function to dynamically render the date input using the session state
     def render_date_input():
@@ -36,25 +41,32 @@ def Dashboard():
         )
     sunday_date = render_date_input() # Returns value
 
-    # print("sunday_date=", sunday_date, type(sunday_date))
     attendees = db.get_attendees_on_date(sunday_date)
     attendees = pd.DataFrame(
         attendees, 
         columns=["English Name 英文名", "Chinese Name 中文名"]
     )
     st.write("Total Attendees 总数: ", attendees.shape[0])
-    st.dataframe(attendees, hide_index = True)
+    st.dataframe(attendees, hide_index = True, height="content")
 
+    # ------------------------------------------------------------
+    #               Visualize attendance trends
+    # ------------------------------------------------------------
     st.subheader("Attendance Trends", divider="red")
-    # print("date_range=", st.session_state["date_range"])
-    date_range = st.date_input(
-        "Select date range 选择日期范围",
-        value=st.session_state["date_range"]
-    )
-
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input(
+            "Start date",
+            key = "start_date"
+        )
+    with col2:
+        end_date = st.date_input(
+            "End date",
+            key = "end_date"
+        )
     attendees_in_range = db.get_attendees_in_date_range(
-        start_date=st.session_state["date_range"][0],
-        end_date=st.session_state["date_range"][1]
+        start_date=st.session_state["start_date"],
+        end_date=st.session_state["end_date"]
     )
     attendees_in_range = pd.DataFrame(
         attendees_in_range, 
@@ -64,7 +76,6 @@ def Dashboard():
     counts_df = attendees_in_range['Date'].value_counts().reset_index()
     counts_df.columns = ['Date', 'Count']
     counts_df = counts_df.sort_values('Date')
-    # print(counts_df)
 
     fig = px.line(
         counts_df,
@@ -82,4 +93,3 @@ def Dashboard():
     )
     if len(event.selection["points"]) > 0:
         st.session_state["sunday_date"] = datetime.fromisoformat(event.selection["points"][0]['x'])
-        # print("reset date to:", st.session_state["sunday_date"])
