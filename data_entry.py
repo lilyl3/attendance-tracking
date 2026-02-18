@@ -1,9 +1,21 @@
 import pandas as pd
+import argparse
+import os as os
+
 from config_pages import get_db
+from pathlib import Path
+
+parser = argparse.ArgumentParser(description="Add members from a CSV file")
+parser.add_argument("csv_file", type=str, help="Path to the CSV file")
+args = parser.parse_args()
+
+csv_file = Path(args.csv_file)
+if not csv_file.is_file():
+    raise FileNotFoundError(f"CSV file does not exist: {csv_file}")
 
 # Reads an excel file 
 data_df = pd.read_excel(
-    "TSA attendance 2026.xlsx",
+    csv_file,
     names=["english_name", "chinese_name"]
 )
 
