@@ -54,18 +54,11 @@ This will create a clickable desktop icon that users can use to start or stop th
 
 ## Importing Members
 
-You can add members to the database using a `.csv` file containing `english_name` and `chinese_name` columns.
-
-### CSV Format Example
-```csv
-english_name,chinese_name
-John Smith,史密斯
-Jane Doe,简多
-```
+You can add members to the database using a `.xslx` file containing `english_name` and `chinese_name` columns.
 
 ### How to Run
 Make sure your virtual environment is activated, then run:
 ```bash
-python3 data_entry.py path/to/your_file.csv
+python3 data_entry.py path/to/your_file.xslx
 ```
 
