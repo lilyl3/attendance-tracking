@@ -23,7 +23,7 @@ def Add_Member():
         st.session_state["family_id"] = ""
         st.session_state["invited_by"] = ""
         
-    st.header("Register 登记", divider="red")
+    st.header("Register 登记", divider="blue")
     # -------------------------
     # No family name recorded
     # -------------------------
@@ -51,7 +51,7 @@ def Add_Member():
 
         st.button("Reset 重置", on_click=reset_all)
 
-        st.subheader("Add Member 加成员", divider="red")
+        st.subheader("Add Member 加成员", divider="blue")
         with st.form(key="add_member_form", clear_on_submit=True):
             english_name = st.text_input("English Name 英文名")
             chinese_name = st.text_input("Chinese Name 中文名")
