@@ -53,7 +53,11 @@ def Add_Member():
 
         st.subheader("Add Member 加成员", divider="blue")
         with st.form(key="add_member_form", clear_on_submit=True):
-            english_name = st.text_input("English Name 英文名")
+            col1, col2 = st.columns(2)
+            with col1:
+                last_name = st.text_input("Last Name 英文姓氏", value = st.session_state["family_name"])
+            with col2:
+                first_name = st.text_input("First Name 英文名字")
             chinese_name = st.text_input("Chinese Name 中文名")
 
             gender = st.radio("Gender 性别", ["Male 男", "Female 女"])
@@ -70,20 +74,23 @@ def Add_Member():
 
             add_member_button = st.form_submit_button("Add member 加成员")
             if add_member_button:
-                if english_name or chinese_name:
+                # Required: English or Chinese name
+                if (last_name and first_name) or chinese_name:
                     member_id = db.add_member([
-                        english_name, chinese_name, 
+                        f"{last_name}, {first_name}", chinese_name, 
                         gender, age, phone_number, address, 
                         language, purpose_of_visit, 
                         faith_status, st.session_state["family_id"]
                     ])
                     db.add_attendance(member_id)
 
-                    if not english_name:
-                        english_name = ""
+                    if not last_name:
+                        last_name = ""
+                    if not first_name:
+                        first_name = ""
                     if not chinese_name:
                         chinese_name = ""
-                    st.session_state["family"].append([english_name, chinese_name])
+                    st.session_state["family"].append([f"{last_name}, {first_name}", chinese_name])
 
                     st.success("Member added! 已加成员!")
                     st.rerun()
