@@ -20,32 +20,39 @@ class AttendanceDB():
         curr = self.create_cursor()
         curr.execute(schema.MEMBERS_TABLE)
         curr.execute(schema.ATTENDANCE_TABLE)
+        curr.execute(schema.FAMILY_TABLE)
 
-    def is_member_id(self, member_id):
+    def get_member_id(self, name):
+        if name is None or name == "":
+            return None
         curr = self.create_cursor()
-        curr.execute(sql.IS_MEMBER_ID, (member_id,))
+        curr.execute(sql.GET_MEMBER_ID, (name, name))
         row = curr.fetchone()
-        if row:
-            return True
-        return False
-
-    # Check if person is a member
-    def is_member(self, english_name, chinese_name):
-        curr = self.create_cursor()
-        curr.execute(sql.IS_MEMBER, (english_name, chinese_name))
-        row = curr.fetchone()
-        if row:
-            return True
-        return False
+        member_id = row[0] if row else None
+        return member_id
 
     # Add new member
-    def add_member(self, english_name, chinese_name):
-        if not self.is_member(english_name, chinese_name):
-            curr = self.create_cursor()
-            curr.execute(sql.ADD_MEMBER, (english_name, chinese_name))
-            curr.connection.commit()
+    def add_member(self, data):
+        curr = self.create_cursor()
+        for i in range(len(data)):
+            if data[i] == "":
+                data[i] = None
+        curr.execute(sql.ADD_MEMBER, data)
+        member_id = curr.lastrowid
+        curr.connection.commit()
+        return member_id
 
-    # Return all members
+    def add_family(self, family_name: str, date = None, invited_by_name = None):
+        invited_by = self.get_member_id(invited_by_name)
+        if date:
+            date = utils.format_date(date, iso=True)
+        curr = self.create_cursor()
+        curr.execute(sql.ADD_FAMILY, (family_name, date, invited_by))
+        family_id = curr.lastrowid
+        curr.connection.commit()
+        return family_id
+
+    # Return all members who attended on most recent dunday
     def get_members(self):
         curr = self.create_cursor()
         most_recent_sunday = utils.most_recent_sunday()
@@ -79,10 +86,8 @@ class AttendanceDB():
     # Query names of attendees on a given day
     # If no date is provided, return the most recent Sunday
     # Returns a list of tuples
-    def get_attendees_on_date(self, date = None):
-        if (date is None):
-            date = utils.most_recent_sunday()
-        else:
+    def get_attendees_on_date(self, date = utils.most_recent_sunday()):
+        if not isinstance(date, str):
             date = utils.format_date(date, iso=True)
         curr = self.create_cursor()
         curr.execute(sql.GET_ATTENDEE_NAMES, (date, ))
