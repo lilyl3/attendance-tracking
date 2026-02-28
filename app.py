@@ -7,8 +7,8 @@ set_page()
 pg = st.navigation(
     [ 
         Mark_attendance.Mark_Attendance,
-        Dashboard.Dashboard,
-        Add_Member.Add_Member
+        Add_Member.Add_Member,
+        Dashboard.Dashboard
     ],
     position = "top"
 )
