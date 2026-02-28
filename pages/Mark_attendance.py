@@ -41,7 +41,7 @@ def Mark_Attendance():
         data = db.get_members()
         data_df = pd.DataFrame(
             data,
-            columns=["Member ID", "English Name 英文名", "Chinese Name 中文名", "Present 在场吗?"]
+            columns=["Member ID", "Family Name", "Family ID", "English Name 英文名", "Chinese Name 中文名", "Present 在场吗?"]
         )
 
         data_df["Present 在场吗?"] = data_df["Present 在场吗?"].apply(
@@ -49,6 +49,10 @@ def Mark_Attendance():
         ).astype("boolean")
 
         data_df = data_df.set_index("Member ID")
+        # Sort by family name, family id
+        data_df.sort_values(by=["Family Name", "Family ID"], inplace=True)
+        data_df.drop(columns=["Family Name"], inplace=True)
+
         st.session_state["db"] = data_df.copy()
         st.session_state["mask"] = data_df["Present 在场吗?"]
         st.session_state["updated_mask"] = data_df["Present 在场吗?"]
@@ -56,9 +60,17 @@ def Mark_Attendance():
     # -----------------------------------------------------------
     #                       Display data editor
     # -----------------------------------------------------------
+    # Style dataframe to alternate background color between families
+    colors = ["#ffffff", "#f0f8ff"]
+    family_order = {family: (i % 2) for i, family in enumerate(st.session_state["db"]["Family ID"].unique())}
+    def color_by_family(row):
+        index = family_order[row['Family ID']]
+        return [f"background-color: {colors[index]}"] * len(row)
+
     edited_df = st.data_editor(
-        st.session_state["db"],
+        st.session_state["db"].style.apply(color_by_family, axis=1),
         column_config={
+            "Family ID": None,
             "Present 在场吗?": st.column_config.CheckboxColumn("Present 在场吗?")
         },
         disabled=["English Name 英文名", "Chinese Name 中文名"],
