@@ -4,6 +4,32 @@ import time
 from config_pages import set_page, display_organization, get_db
 from utils import most_recent_sunday
 
+def style_button():
+    st.markdown(
+        """
+        <style>
+        .stButton>button {
+            background-color: #1034a6;
+            color: white;
+            height: 3em;
+            width: 10em;
+            border-radius: 10px;
+            border: 2px solid;
+            font-weight: bold;
+        }
+        .stForm button {
+            background-color: #1034a6;  /* Green */
+            color: white;
+            border-radius: 8px;
+            height: 3em;
+            width: 13em;
+            font-weight: bold;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 def reset_all():
     st.session_state["family"] = []
     st.session_state["family_name"] = ""
@@ -15,6 +41,7 @@ def Add_Member():
 
     set_page()
     display_organization()
+    style_button()
 
     if "page" not in st.session_state or st.session_state["page"] != "add_member":
         st.session_state["page"] = "add_member"
