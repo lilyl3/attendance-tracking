@@ -1,15 +1,38 @@
 import streamlit as st
+import streamlit_authenticator as stauth
+
+import yaml
+from yaml.loader import SafeLoader
+
 from config_pages import set_page
 from pages import Add_Member, Dashboard, Mark_attendance
 
-set_page()
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
-pg = st.navigation(
-    [ 
-        Mark_attendance.Mark_Attendance,
-        Add_Member.Add_Member,
-        Dashboard.Dashboard
-    ],
-    position = "top"
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days']
 )
-pg.run()
+
+try:
+    authenticator.login()
+    if st.session_state.get("authentication_status"):
+        set_page()
+        pg = st.navigation(
+            [ 
+                Mark_attendance.Mark_Attendance,
+                Add_Member.Add_Member,
+                Dashboard.Dashboard
+            ],
+            position="top"
+        )
+        pg.run()
+    elif st.session_state.get('authentication_status') is False:
+        st.error('Username or password is incorrect')
+    elif st.session_state.get('authentication_status') is None:
+        st.warning('Please enter your username and password')
+except Exception as e:
+    st.error(e)
