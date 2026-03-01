@@ -38,21 +38,27 @@ After running the command, you should see output similar to:
     - Set the network profile to `Private`
 ---
 
+## Desktop Icons
+
+### macOS
+
+1. Open **Automator**.
+2. Click **New Document** → Select **Application**.
+3. Add the action **Run Shell Script**.
+4. Enter your Streamlit start/stop script (`start_app.sh`, `close_app.sh`) in the editor.
+5. Press **Cmd + S** to save.
+6. Save the file to your **Desktop**.
+
+This will create a clickable desktop icon that users can use to start or stop the Streamlit application.
+
+
 ## Importing Members
 
-You can add members to the database using a `.csv` file containing `english_name` and `chinese_name` columns.
-
-### CSV Format Example
-```csv
-english_name,chinese_name
-John Smith,史密斯
-Jane Doe,简多
-```
+You can add members to the database using a `.xslx` file containing `english_name` and `chinese_name` columns.
 
 ### How to Run
-
 Make sure your virtual environment is activated, then run:
 ```bash
-python3 data_entry.py path/to/your_file.csv
+python3 data_entry.py path/to/your_file.xslx
 ```
 

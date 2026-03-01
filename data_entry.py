@@ -5,17 +5,17 @@ import os as os
 from config_pages import get_db
 from pathlib import Path
 
-parser = argparse.ArgumentParser(description="Add members from a CSV file")
-parser.add_argument("csv_file", type=str, help="Path to the CSV file")
+parser = argparse.ArgumentParser(description="Add members from an Excel file")
+parser.add_argument("xslx_file", type=str, help="Path to an Excel file")
 args = parser.parse_args()
 
-csv_file = Path(args.csv_file)
-if not csv_file.is_file():
-    raise FileNotFoundError(f"CSV file does not exist: {csv_file}")
+xslx_file = Path(args.xslx_file)
+if not xslx_file.is_file():
+    raise FileNotFoundError(f"xslx file does not exist: {xslx_file}")
 
 # Reads an excel file 
 data_df = pd.read_excel(
-    csv_file,
+    xslx_file,
     names=["english_name", "chinese_name", "index", "family_name"]
 )
 # Strip white spaces at the ends of string
