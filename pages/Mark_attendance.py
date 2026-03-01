@@ -39,7 +39,6 @@ def Mark_Attendance():
     #               Load data once into session
     # -----------------------------------------------------------
     if "page" not in st.session_state or st.session_state["page"] != "mark_attendance":
-        print("reset")
         st.session_state["page"] = "mark_attendance"
 
         data = db.get_members()
@@ -131,5 +130,5 @@ def Mark_Attendance():
 
             if mask.any():         
                 member_id = int(edited_df[mask].index[0])
-                print(f"Todo: update member={member_id}, {edited_df.loc[member_id, 'English Name 英文名']} to {edited_df.loc[member_id, 'Present 在场吗?']}")
+                # print(f"Todo: update member={member_id}, {edited_df.loc[member_id, 'English Name 英文名']} to {edited_df.loc[member_id, 'Present 在场吗?']}")
                 st.session_state["marked"] = (i, member_id, edited_df.loc[member_id, "Present 在场吗?"])
