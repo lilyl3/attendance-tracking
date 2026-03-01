@@ -27,7 +27,7 @@ def Dashboard():
     if "end_date" not in st.session_state:
         st.session_state["end_date"] = most_recent_sunday(iso=False)
 
-    st.subheader("Sunday Overview", divider="red")
+    st.subheader("Sunday Overview", divider="blue")
 
     # ------------------------------------------------------------
     #                   Display Sunday attendance
@@ -52,7 +52,7 @@ def Dashboard():
     # ------------------------------------------------------------
     #               Visualize attendance trends
     # ------------------------------------------------------------
-    st.subheader("Attendance Trends", divider="red")
+    st.subheader("Attendance Trends", divider="blue")
     col1, col2 = st.columns(2)
     with col1:
         start_date = st.date_input(
