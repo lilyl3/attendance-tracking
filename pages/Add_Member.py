@@ -93,7 +93,7 @@ def Add_Member():
             phone_number = st.text_input("Phone Number 电话号码")
             address = st.text_input("Address 地址")
 
-            language = st.radio("Language 语言", ["English 英语", "Mandarin 普通话", "Cantonese 粤语"])
+            language = st.multiselect("Language 语言", ["English 英语", "Mandarin 国语", "Cantonese 粤语"])
             purpose_of_visit = st.radio("I am 我是", ["Visitor 访客", "New Resident 新居民"])
             faith_status = st.radio(
                 "I am 我是", ["Interested in becoming a Christian 有兴趣成为基督徒", "Christian 基督徒", "Other 非基督徒"]
@@ -106,7 +106,7 @@ def Add_Member():
                     member_id = db.add_member([
                         f"{last_name}, {first_name}", chinese_name, 
                         gender, age, phone_number, address, 
-                        language, purpose_of_visit, 
+                        ", ".join(language), purpose_of_visit, 
                         faith_status, st.session_state["family_id"]
                     ])
                     db.add_attendance(member_id)
