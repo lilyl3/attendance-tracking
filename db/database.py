@@ -41,6 +41,18 @@ class AttendanceDB():
         member_id = curr.lastrowid
         curr.connection.commit()
         return member_id
+    
+    # Returns (member_id, family_id)
+    def get_member_info(self, last_name, first_name, chinese_name):
+        curr = self.create_cursor()
+        curr.execute(sql.GET_MEMBER_INFO, (f"{last_name}, {first_name}", chinese_name))
+        row = curr.fetchone()
+        return row if row else None
+    
+    def update_family_id(self, member_id, family_id):
+        curr = self.create_cursor()
+        curr.execute(sql.UPDATE_FAMILY_ID, (family_id, member_id))
+        curr.connection.commit()
 
     def add_family(self, family_name: str, date = None, invited_by_name = None):
         invited_by = self.get_member_id(invited_by_name)
@@ -51,12 +63,18 @@ class AttendanceDB():
         family_id = curr.lastrowid
         curr.connection.commit()
         return family_id
-
-    # Return all members who attended on most recent dunday
-    def get_members(self):
+    
+    # Remove all families with no members
+    def clean_family(self):
         curr = self.create_cursor()
-        most_recent_sunday = utils.most_recent_sunday()
-        curr.execute(sql.GET_MEMBERS, (most_recent_sunday, ))
+        curr.execute(sql.CLEAN_FAMILY)
+        curr.connection.commit()
+
+    # Return all members who attended on sunday_date
+    def get_members(self, sunday_date):
+        curr = self.create_cursor()
+        sunday_date = utils.format_date(sunday_date, iso=True)
+        curr.execute(sql.GET_MEMBERS, (sunday_date, ))
         return curr.fetchall()
 
     # Mark member's attendance
