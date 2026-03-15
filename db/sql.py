@@ -5,6 +5,18 @@ ADD_MEMBER = """
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
+GET_MEMBER_INFO = """
+    SELECT id, family_id
+    FROM members
+    WHERE english_name LIKE ?
+    OR chinese_name = ?
+"""
+
+DELETE_MEMBER = """
+    DELETE FROM members
+    WHERE id = ?
+"""
+
 GET_MEMBER_ID = """
     SELECT id
     FROM members
@@ -12,10 +24,27 @@ GET_MEMBER_ID = """
     OR chinese_name = ?
 """
 
+UPDATE_FAMILY_ID = """
+    UPDATE members
+    SET family_id = ?
+    WHERE id = ?
+"""
+
 ADD_FAMILY = """
     INSERT INTO family
     (family_name, first_visit_date, invited_by_id)
     VALUES (?, ?, ?)
+"""
+
+CLEAN_FAMILY = """
+    DELETE FROM family
+    WHERE id IN (
+        SELECT f.id
+        FROM family f
+        LEFT JOIN members m
+        ON f.id = m.family_id
+        WHERE m.id IS NULL
+    )
 """
 
 ADD_ATTENDANCE = """
@@ -34,6 +63,22 @@ COUNT_ATTENDEES = """
     SELECT COUNT(*)
     FROM attendance
     WHERE attendance.date = ?
+"""
+
+GET_NEW_FRIENDS = """
+    SELECT m.english_name, m.chinese_name
+    FROM members m
+    JOIN family f
+    ON m.family_id = f.id
+    WHERE f.first_visit_date = ?
+"""
+
+GET_NEW_FRIENDS_IN_RANGE = """
+    SELECT f.first_visit_date
+    FROM members m
+    JOIN family f
+    ON m.family_id = f.id
+    WHERE f.first_visit_date LIKE ?
 """
 
 GET_MEMBERS = """
@@ -61,5 +106,5 @@ GET_ATTENDEES_IN_RANGE = """
     FROM members m
     JOIN attendance a
     ON m.id = a.member_id
-    WHERE a.date >= ? AND a.date <= ?
+    WHERE a.date LIKE ?
 """

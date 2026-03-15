@@ -30,6 +30,11 @@ class AttendanceDB():
         row = curr.fetchone()
         member_id = row[0] if row else None
         return member_id
+    
+    def delete_member(self, id):
+        curr = self.create_cursor()
+        curr.execute(sql.DELETE_MEMBER, (id, ))
+        curr.connection.commit()
 
     # Add new member
     def add_member(self, data):
@@ -54,10 +59,10 @@ class AttendanceDB():
         curr.execute(sql.UPDATE_FAMILY_ID, (family_id, member_id))
         curr.connection.commit()
 
-    def add_family(self, family_name: str, date = None, invited_by_name = None):
+    def add_family(self, family_name: str, date, invited_by_name = None):
         invited_by = self.get_member_id(invited_by_name)
-        if date:
-            date = utils.format_date(date, iso=True)
+        date = utils.format_date(date, iso=True)
+
         curr = self.create_cursor()
         curr.execute(sql.ADD_FAMILY, (family_name, date, invited_by))
         family_id = curr.lastrowid
@@ -88,6 +93,20 @@ class AttendanceDB():
         curr.execute(sql.DELETE_ATTENDANCE, (member_id, utils.most_recent_sunday()))
         curr.connection.commit()
 
+    def get_new_friends(self, sunday_date = None):
+        curr = self.create_cursor()
+        if sunday_date is None:
+            sunday_date = utils.most_recent_sunday()
+        if not isinstance(date, str):
+            sunday_date = utils.format_date(sunday_date, iso=True)
+        curr.execute(sql.GET_NEW_FRIENDS, (sunday_date,))
+        return curr.fetchall()
+    
+    def get_new_friends_in_range(self, year):
+        curr = self.create_cursor()
+        curr.execute(sql.GET_NEW_FRIENDS_IN_RANGE, (str(year) + "%",))
+        return curr.fetchall()
+
     # Query total attendees on a given day
     # If no date is provided, return the most recent Sunday
     # Returns a number
@@ -111,11 +130,8 @@ class AttendanceDB():
         curr.execute(sql.GET_ATTENDEE_NAMES, (date, ))
         return curr.fetchall()
     
-    # Query attendance between [start_date, end_date]
-    # If start_date is not provided, then return attendance in past 3 months
-    def get_attendees_in_date_range(self, start_date = utils.get_date_months_ago(), end_date = utils.today()):
-        start_date = utils.format_date(start_date, iso=True)
-        end_date = utils.format_date(end_date, iso=True)
+    # Query attendance count in the year provided
+    def get_attendees_in_range(self, year):
         curr = self.create_cursor()
-        curr.execute(sql.GET_ATTENDEES_IN_RANGE, (start_date, end_date))
+        curr.execute(sql.GET_ATTENDEES_IN_RANGE, (str(year) + "%", ))
         return curr.fetchall()
