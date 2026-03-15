@@ -1,12 +1,9 @@
 import streamlit as st
 import pandas as pd
-import time
 import os as os
 
 from config_pages import set_page, display_organization, get_db
-from utils import attendance_file_path, most_recent_sunday
-
-file_path = attendance_file_path()
+from utils import most_recent_sunday
 
 def style_tabs():
     st.markdown("""
@@ -29,7 +26,7 @@ def update_db():
     st.session_state["mask"][i] = st.session_state["updated_mask"][i]
     st.session_state["marked"] = None
 
-# Update local session state to indicate date has changed
+# Update session state to indicate date has changed
 # So attendance data will be reloaded from the db
 def attendance_updated_att_date():
     st.session_state["updated_att_date"] = True
@@ -91,11 +88,6 @@ db = get_db()
 def Mark_Attendance():
     set_page()
     display_organization()
-    
-    if "marked" in st.session_state:
-        update_db()
-    else:
-        st.session_state["marked"] = None
 
     if "att_date" not in st.session_state:
         st.session_state["att_date"] = most_recent_sunday(iso=False)
@@ -108,6 +100,11 @@ def Mark_Attendance():
     if st.session_state["updated_att_date"]:
         st.session_state["updated_att_date"] = False    
         setup_session_state()
+
+    if "marked" in st.session_state:
+        update_db()
+    else:
+        st.session_state["marked"] = None
 
     st.date_input(
         "Date 日期",
