@@ -8,23 +8,32 @@ def style_button():
     st.markdown(
         """
         <style>
-        .stButton>button {
-            background-color: #1034a6;
-            color: white;
-            height: 3em;
-            width: 10em;
-            border-radius: 10px;
-            border: 2px solid;
-            font-weight: bold;
-        }
-        .stForm button {
-            background-color: #1034a6;  /* Green */
-            color: white;
-            border-radius: 8px;
-            height: 3em;
-            width: 13em;
-            font-weight: bold;
-        }
+            .stButton>button {
+                background-color: #1034a6;
+                color: white;
+                height: 3em;
+                width: 10em;
+                border-radius: 10px;
+                border: 2px solid;
+                font-weight: bold;
+            }
+            .stButton>button:hover {
+                background-color: #0a276b; /* darker blue on hover */
+                transform: scale(1.025);    /* slightly enlarge button */
+            }
+
+            .stForm button {
+                background-color: #1034a6;  /* Green */
+                color: white;
+                border-radius: 8px;
+                height: 3em;
+                width: 10em;
+                font-weight: bold;
+            }
+            .stForm button:hover {
+                background-color: #0a276b;
+                transform: scale(1.025);
+            }
         </style>
         """,
         unsafe_allow_html=True
@@ -49,20 +58,26 @@ def Add_Member():
         st.session_state["family_name"] = ""
         st.session_state["family_id"] = ""
         st.session_state["invited_by"] = ""
+        st.session_state["first_visit_date"] = most_recent_sunday(iso=False)
         
-    st.header("Register 登记", divider="blue")
+    st.subheader("Register 登记", divider="blue")
     # -------------------------
     # No family name recorded
     # -------------------------
-    st.text_input("Family Name 姓氏", key = "family_name")
-    st.text_input("Invited by 邀请人", key="invited_by")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.date_input("Date 日期", key="first_visit_date")
+    with col2:
+        st.text_input("Family Name 姓氏", key = "family_name")
+    with col3:
+        st.text_input("Invited by 邀请人", key="invited_by")
 
     if not st.session_state["family_id"]:
         if st.button("Save 存家庭信息") and st.session_state["family_name"]:
             # Add family to database
             family_id = db.add_family(
                 st.session_state["family_name"], 
-                most_recent_sunday(), 
+                st.session_state["first_visit_date"], 
                 st.session_state["invited_by"]
             )
             st.session_state["family_id"] = family_id
