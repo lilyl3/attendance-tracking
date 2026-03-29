@@ -47,10 +47,21 @@ class AttendanceDB():
         curr.connection.commit()
         return member_id
     
-    # Returns (member_id, family_id)
-    def get_member_info(self, last_name, first_name, chinese_name):
+    def get_member_info(self, member_id):
         curr = self.create_cursor()
-        curr.execute(sql.GET_MEMBER_INFO, (f"{last_name}, {first_name}", chinese_name))
+        curr.execute(sql.GET_MEMBER_INFO, (member_id,))
+        row = curr.fetchone()
+        return row
+    
+    def update_member_info(self, member_info):
+        curr = self.create_cursor()
+        curr.execute(sql.UPDATE_MEMBER_INFO, member_info)
+        curr.connection.commit()
+    
+    # Returns (member_id, family_id)
+    def get_member_family_info(self, last_name, first_name, chinese_name):
+        curr = self.create_cursor()
+        curr.execute(sql.GET_MEMBER_FAMILY_INFO, (f"{last_name}, {first_name}", chinese_name))
         row = curr.fetchone()
         return row if row else None
     
@@ -80,6 +91,11 @@ class AttendanceDB():
         curr = self.create_cursor()
         sunday_date = utils.format_date(sunday_date, iso=True)
         curr.execute(sql.GET_MEMBERS, (sunday_date, ))
+        return curr.fetchall()
+    
+    def get_members_with_family_initial(self, family_initial):
+        curr = self.create_cursor()
+        curr.execute(sql.GET_MEMBERS_WITH_FAMILY_INITIAL, (f"{family_initial}%", ))
         return curr.fetchall()
 
     # Mark member's attendance
