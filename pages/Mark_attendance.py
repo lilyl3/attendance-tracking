@@ -24,7 +24,7 @@ def update_db():
         db.add_attendance(member_id, att_date)
     else:
         db.delete_attendance(member_id, att_date)
-    st.session_state["mask"][i] = st.session_state["updated_mask"][i]
+    st.session_state["tabs"][i]["mask"] = st.session_state["tabs"][i]["updated_mask"]
     st.session_state["marked"] = None
 
 # Update session state to indicate date has changed
@@ -64,29 +64,27 @@ def map_family_to_color(data_df):
         st.session_state["family_info"][id] = (i % 2, sum(data_df["Family ID"] == id))
 
 # Sets key "tabs" in session_state
-# up  session state such that attendance data is 
-# split by A-Z based on the first character of a family name
-def split_attendance_by_tabs(data_df):
-    st.session_state["db"] = []
-    st.session_state["mask"] = []
-    st.session_state["tab_names"] = []
+# as a list of dicts, each representing a tab
+# Each tab is a letter in the alphabet
+# containing data of all families with a family name starting with letter
+def split_to_tabs(data_df):
+    st.session_state["tabs"] = []
 
     for c in list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
         mask = data_df["Family Name"].str.startswith(c)
         if mask.any():
-            st.session_state["tab_names"].append(c)
-            st.session_state["db"].append(
-                data_df[data_df["Family Name"].str.startswith(c)]
-            )
-            st.session_state["mask"].append(
-                st.session_state["db"][-1]["Present 在场吗?"]
-            )
-    st.session_state["updated_mask"] = [s.copy() for s in st.session_state["mask"]]
+            tab = {
+                "name" : c, 
+                "db": data_df[mask]
+            }
+            tab["mask"] = tab["db"]["Present 在场吗?"]
+            tab["updated_mask"] = [s.copy() for s in tab["mask"]]
+            st.session_state["tabs"].append(tab)
 
 def reset_data():
     data_df = load_attendance_data()
     map_family_to_color(data_df)
-    split_attendance_by_tabs(data_df)
+    split_to_tabs(data_df)
 
 def setup_session_state():
     if "att_date" not in st.session_state:
@@ -128,11 +126,11 @@ def Mark_Attendance():
         return [f"background-color: {colors[index]}"] * len(row)
 
     style_tabs()
-    tabs = st.tabs(st.session_state["tab_names"])
+    tabs = st.tabs([tab["name"] for tab in st.session_state["tabs"]])
     for i, tab in enumerate(tabs):
         with tab:
             edited_df = st.data_editor(
-                st.session_state["db"][i].style.apply(color_by_family, axis=1),
+                st.session_state["tabs"][i]["db"].style.apply(color_by_family, axis=1),
                 column_config={
                     "Family Name": None,
                     "Family ID": None,
@@ -146,11 +144,15 @@ def Mark_Attendance():
             # -----------------------------------------------------------
             #                 Auto-save changes on every edit
             # -----------------------------------------------------------
-            st.session_state["updated_mask"][i] = edited_df["Present 在场吗?"]
-            mask = edited_df["Present 在场吗?"] != st.session_state["mask"][i]
+            st.session_state["tabs"][i]["updated_mask"] = edited_df["Present 在场吗?"]
+            mask = edited_df["Present 在场吗?"] != st.session_state["tabs"][i]["mask"]
 
             rows = edited_df[mask]
             if not rows.empty:
                 member_id = int(rows.index[0])   
-                st.session_state["marked"] = (i, member_id, edited_df.loc[member_id, "Present 在场吗?"], st.session_state["att_date"])
-                print(st.session_state["marked"])
+                st.session_state["marked"] = (
+                    i, 
+                    member_id, 
+                    edited_df.loc[member_id, "Present 在场吗?"], 
+                    st.session_state["att_date"]
+                )
