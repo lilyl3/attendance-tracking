@@ -83,14 +83,18 @@ class AttendanceDB():
         return curr.fetchall()
 
     # Mark member's attendance
-    def add_attendance(self, member_id):
+    def add_attendance(self, member_id, sunday_date):
         curr = self.create_cursor()
-        curr.execute(sql.ADD_ATTENDANCE, (member_id, utils.most_recent_sunday()))
+        if not isinstance(date, str):
+            sunday_date = utils.format_date(sunday_date, iso=True)
+        curr.execute(sql.ADD_ATTENDANCE, (member_id, sunday_date))
         curr.connection.commit()
 
-    def delete_attendance(self, member_id):
+    def delete_attendance(self, member_id, sunday_date):
         curr = self.create_cursor()
-        curr.execute(sql.DELETE_ATTENDANCE, (member_id, utils.most_recent_sunday()))
+        if not isinstance(date, str):
+            sunday_date = utils.format_date(sunday_date, iso=True)
+        curr.execute(sql.DELETE_ATTENDANCE, (member_id, sunday_date))
         curr.connection.commit()
 
     def get_new_friends(self, sunday_date = None):
