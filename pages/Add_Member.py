@@ -12,7 +12,7 @@ def style_button():
                 background-color: #1034a6;
                 color: white;
                 height: 3em;
-                width: 10em;
+                width: 12em;
                 border-radius: 10px;
                 border: 2px solid;
                 font-weight: bold;
@@ -27,7 +27,7 @@ def style_button():
                 color: white;
                 border-radius: 8px;
                 height: 3em;
-                width: 10em;
+                width: 12em;
                 font-weight: bold;
             }
             .stForm button:hover {
@@ -111,7 +111,8 @@ def Add_Member():
             language = st.multiselect("Language 语言", ["English 英语", "Mandarin 国语", "Cantonese 粤语"])
             purpose_of_visit = st.radio("I am 我是", ["Visitor 访客", "New Resident 新居民"])
             faith_status = st.radio(
-                "I am 我是", ["Interested in becoming a Christian 有兴趣成为基督徒", "Christian 基督徒", "Other 非基督徒"]
+                "Faith 信仰", 
+                ["Interested in becoming a Christian 有兴趣成为基督徒", "Christian 基督徒", "Other 非基督徒"]
             )
 
             add_member_button = st.form_submit_button("Add member 加成员")
