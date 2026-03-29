@@ -5,11 +5,38 @@ ADD_MEMBER = """
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
-GET_MEMBER_INFO = """
+UPDATE_MEMBER_INFO = """
+    UPDATE members
+    SET english_name = ?,
+        chinese_name = ?,
+        gender = ?, 
+        age = ?, 
+        phone_number = ?, 
+        address = ?, 
+        language = ?, 
+        initial_faith = ?
+    WHERE members.id = ?
+"""
+
+GET_MEMBER_FAMILY_INFO = """
     SELECT id, family_id
     FROM members
     WHERE english_name LIKE ?
     OR chinese_name = ?
+"""
+
+GET_MEMBER_INFO = """
+    SELECT *
+    FROM members
+    WHERE members.id = ?
+"""
+
+GET_MEMBERS_WITH_FAMILY_INITIAL = """
+    SELECT members.id || ". " || english_name || ' ' || chinese_name as name
+    FROM members
+    JOIN family 
+    ON family.id = members.family_id
+    WHERE family_name LIKE ?
 """
 
 DELETE_MEMBER = """
