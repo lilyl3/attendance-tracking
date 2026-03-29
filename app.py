@@ -5,7 +5,7 @@ import yaml
 from yaml.loader import SafeLoader
 
 from config_pages import set_page
-from pages import Add_Member, Dashboard, Mark_attendance
+from pages import Add_Member, Dashboard, Mark_attendance, View_Member
 
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -25,7 +25,8 @@ try:
             [ 
                 Mark_attendance.Mark_Attendance,
                 Add_Member.Add_Member,
-                Dashboard.Dashboard
+                Dashboard.Dashboard,
+                View_Member.View_Member
             ],
             position="top"
         )
